@@ -200,3 +200,9 @@ deactivate
 ```
 
 ## Screenshots
+<img width="1471" height="708" alt="image" src="https://github.com/user-attachments/assets/b1b19e7c-5507-4e35-951b-50d903bcd183" />
+<img width="1510" height="651" alt="image" src="https://github.com/user-attachments/assets/9635083f-62b2-430f-a14a-b26ad12f8756" />
+<img width="1566" height="651" alt="image" src="https://github.com/user-attachments/assets/69606e7f-ef44-4cdd-b70d-3aa95907c716" />
+<img width="1591" height="782" alt="image" src="https://github.com/user-attachments/assets/43465cc0-e6d8-475c-82c8-5ccf00077ad7" />
+
+
