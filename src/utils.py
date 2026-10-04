@@ -5,11 +5,10 @@ import scipy.io
 
 def load_dataset(filepath="data/users_movies.mat"):
     """
-    Loads the MATLAB dataset file and extracts all essential arrays.
-    Handles relative path resolution cleanly whether run from root or src/.
+    Loads users_movies.mat and extracts arrays safely.
+    Handles executions from project root or inside src/.
     """
     if not os.path.exists(filepath):
-        # Fallback check if script is executed from inside src/
         alt_path = os.path.join("..", filepath)
         if os.path.exists(alt_path):
             filepath = alt_path
@@ -28,7 +27,7 @@ def load_dataset(filepath="data/users_movies.mat"):
 
 
 def get_movie_title(movie):
-    """Safely extracts a clean movie title string from varying MATLAB object structures."""
+    """Safely extracts movie title string across MATLAB struct types."""
     if isinstance(movie, str):
         return movie
     if isinstance(movie, np.ndarray):
@@ -39,32 +38,28 @@ def get_movie_title(movie):
 
 
 def filter_complete_raters(ratings_20):
-    """
-    Filters rows where users rated all 20 selected movies (no zeros).
-    Returns filtered ratings matrix and the boolean mask.
-    """
+    """Filters users who have evaluated all 20 popular movies (no zeros)."""
     mask = np.all(ratings_20 != 0, axis=1)
     return ratings_20[mask], mask
 
 
 def euclidean_similarity(ratings, query):
-    """Computes Euclidean distances between matrix rows and a 1D query vector."""
+    """Computes Euclidean distance ||x - y||_2 across all complete user vectors."""
     return np.linalg.norm(ratings - query, axis=1)
 
 
 def center_rows(X):
-    """Subtracts the mean of each row from the row elements (row-centering)."""
+    """Applies row-mean centering: x - x_mean."""
     row_means = X.mean(axis=1, keepdims=True)
     return X - row_means
 
 
 def pearson_similarity(ratings_cent, query_cent):
-    """Computes Pearson correlation coefficients using centered rating vectors."""
+    """Computes Pearson correlation coefficient as cosine similarity of centered vectors."""
     numerator = ratings_cent @ query_cent
     denominator = (
         np.linalg.norm(ratings_cent, axis=1) * np.linalg.norm(query_cent)
     )
-    # Guard against division by zero
     denominator = np.where(denominator == 0, 1e-10, denominator)
     return numerator / denominator
 
@@ -78,10 +73,7 @@ def recommend(
     original_user_indices,
     top_n=10,
 ):
-    """
-    Finds movies rated 5 by the most similar user that the current user has not
-    already rated 5 in the popular 20 subset.
-    """
+    """Recommends movies rated 5 by the nearest neighbor that user has not rated 5."""
     original_user = original_user_indices[filtered_user_index]
     liked_by_similar = np.where(users_movies[original_user] == 5)[0]
 
@@ -98,13 +90,3 @@ def recommend(
             break
 
     return recommendations
-
-
-def print_movie_list(title_header, movie_list):
-    """Helper to display formatted movie recommendation outputs."""
-    print(f"\n================ {title_header} ================")
-    if not movie_list:
-        print("No recommendations found.")
-        return
-    for i, movie in enumerate(movie_list, start=1):
-        print(f"{i:2d}. {movie}")
